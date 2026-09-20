@@ -1,7 +1,8 @@
 <?php
 error_reporting(0);
 session_start();
-$data=new mysqli("localhost","root","","studentproject");
+require_once __DIR__ . '/database.php';
+$data = database_connection();
 if(isset($_POST['user']))
     {
 $email = $_POST['email'];

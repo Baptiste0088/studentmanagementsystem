@@ -3,8 +3,8 @@
 
 session_start();
 
-// Database connection
-$data = new mysqli("localhost", "root", "", "studentproject");
+require_once __DIR__ . '/database.php';
+$data = database_connection();
 
 // Check database connection
 if ($data->connect_error) {

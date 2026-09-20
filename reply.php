@@ -1,5 +1,6 @@
 <?php
-$data=new mysqli("localhost","root","","studentproject");
+require_once __DIR__ . '/database.php';
+$data = database_connection();
 
 // Get request ID from URL
 if(isset($_GET['id'])){

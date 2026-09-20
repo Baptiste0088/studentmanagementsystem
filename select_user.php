@@ -9,7 +9,8 @@ if(!isset( $_SESSION['email']))
             header("location:login_form.php");
         }
 
-        $conn = new mysqli("localhost","root","","studentproject");
+        require_once __DIR__ . '/database.php';
+        $conn = database_connection();
 
 if($conn->connect_error){
     die("Connection failed: ".$conn->connect_error);

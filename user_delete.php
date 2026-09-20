@@ -1,7 +1,8 @@
 <?php
 session_start();
 error_reporting(0);
-$data = new mysqli("localhost", "root", "", "studentproject");
+require_once __DIR__ . '/database.php';
+$data = database_connection();
 if($_GET['student_id'])
     {
         $id=$_GET['student_id'];

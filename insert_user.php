@@ -1,13 +1,7 @@
 <?php
 
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "studentproject";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+require_once __DIR__ . '/database.php';
+$conn = database_connection();
 
 // Check connection
 if ($conn->connect_error) {

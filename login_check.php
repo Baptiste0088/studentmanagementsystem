@@ -2,7 +2,8 @@
 
 session_start();
 
-$data = new mysqli("localhost", "root", "", "studentproject");
+require_once __DIR__ . '/database.php';
+$data = database_connection();
 
 if ($data->connect_error) {
     die("Connection error: " . $data->connect_error);

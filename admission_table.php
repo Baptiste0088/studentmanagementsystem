@@ -8,7 +8,8 @@ if(!isset( $_SESSION['email']))
         {
             header("location:login_form.php");
         }
-    $data=new mysqli("localhost","root","","studentproject");
+    require_once __DIR__ . '/database.php';
+    $data = database_connection();
 
 $sql = "SELECT * FROM admission_letter ORDER BY submitted_at ASC";
 $result = $data->query($sql);

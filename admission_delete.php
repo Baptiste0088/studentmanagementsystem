@@ -1,13 +1,8 @@
 <?php
 session_start();
 error_reporting(0);
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "studentproject";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+require_once __DIR__ . '/database.php';
+$conn = database_connection();
 if(isset($_GET['id']))
     {
         $id=$_GET['id'];

@@ -1,0 +1,11 @@
+<?php
+
+return [
+    // Port 3307 is the local end of the SSH tunnel.
+    'host' => '127.0.0.1',
+    'port' => 3307,
+    'username' => 'baptiste',
+    'password' => 'replace-with-database-password',
+    'database' => 'baptiste_db',
+];
+
