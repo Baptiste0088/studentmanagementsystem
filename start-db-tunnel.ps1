@@ -3,13 +3,15 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$sshKeyPath = 'C:\Users\biziy\.ssh\id_ed25519'
+
+$sshKeyPath = 'C:\Users\user\Downloads\id_ed25519'
 
 if (-not (Test-Path -LiteralPath $sshKeyPath)) {
     throw "SSH key was not found at $sshKeyPath"
 }
 
 Write-Host "Opening database tunnel on 127.0.0.1:$LocalPort. Keep this window open while using the app."
+
 & ssh `
     -i $sshKeyPath `
     -p 22 `

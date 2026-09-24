@@ -1,61 +1,89 @@
 <?php
 
+session_start();
+
 require_once __DIR__ . '/database.php';
-$conn = database_connection();
+$data = database_connection();
 
 // Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if ($data->connect_error) {
+    die("Database connection failed: " . $data->connect_error);
 }
 
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    die("Invalid request.");
+}
 
 // Get data from form
-if(isset($_POST['user']))
-    {
-$email = $_POST['email'];
-$password = $_POST['password'];
-$role = $_POST['role'];
-$status = $_POST['status'];
+$fname = trim($_POST["fname"] ?? "");
+$lname = trim($_POST["lname"] ?? "");
+$email = trim($_POST["email"] ?? "");
+$password = $_POST["password"] ?? "";
+$role = $_POST["role"] ?? "";
+$status = $_POST["status"] ?? "active";
 
+// Validate required fields
+if (
+    empty($fname) ||
+    empty($lname) ||
+    empty($email) ||
+    empty($password) ||
+    empty($role)
+) {
+    die("Please fill in all required fields.");
+}
 
-// Encrypt password before saving
-$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+// Validate email
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    die("Invalid email address.");
+}
+// Allow only these roles
+$allowed_roles = ["student", "teacher", "admin"];
 
+if (!in_array($role, $allowed_roles, true)) {
+    die("Invalid user role.");
+}
+
+// Allow only these statuses
+$allowed_statuses = ["active", "inactive"];
+
+if (!in_array($status, $allowed_statuses, true)) {
+    die("Invalid account status.");
+}
 
 // Check if email already exists
-$check_email = "SELECT * FROM users WHERE email='$email'";
-$result = $conn->query($check_email);
+$check = $data->prepare(
+    "SELECT user_id FROM users WHERE email = ? LIMIT 1"
+);
 
-if ($result->num_rows > 0) {
+$check->execute([$email]);
 
-    echo "Email already exists!";
-
-} else {
-
-    // Insert user
-    $sql = "INSERT INTO users (email, password, role, status)
-            VALUES ('$email', '$hashed_password', '$role', '$status')";
-
-
-    if ($conn->query($sql) === TRUE) {
-
-        echo "
-        <script>
-            alert('User created successfully!');
-            window.location='login.html';
-        </script>
-        ";
-
-    } else {
-
-        echo "Error: " . $conn->error;
-
-    }
+if ($check->fetch()) {
+    die("An account with this email already exists.");
 }
-    }
 
+// Hash password
+$hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-// Close connection
-$conn->close();
+// Insert user
+$sql = "
+    INSERT INTO users
+    (first_name, last_name, email, password, role, status)
+    VALUES
+    (?, ?, ?, ?, ?, ?)
+";
+
+$stmt = $data->prepare($sql);
+
+$stmt->execute([
+    $fname,
+    $lname,
+    $email,
+    $hashed_password,
+    $role,
+    $status
+]);
+
+echo "User account created successfully.";
 
 ?>

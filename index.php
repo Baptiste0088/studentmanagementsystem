@@ -66,6 +66,10 @@
     Login
   </a>
 </li>
+<a href="signup.php" class="primary" style="background-color: rgb(9, 15, 204); color: white; border-radius:10px; line-height:70px;">
+    Sign up
+  </a>
+</li>
         </ul>
     </nav>
 
