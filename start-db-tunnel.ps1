@@ -4,7 +4,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$sshKeyPath = 'C:\Users\user\Downloads\id_ed25519'
+$sshKeyPath = 'C:\Users\biziy\.ssh\id_ed25519'
 
 if (-not (Test-Path -LiteralPath $sshKeyPath)) {
     throw "SSH key was not found at $sshKeyPath"
