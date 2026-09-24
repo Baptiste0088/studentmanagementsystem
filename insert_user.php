@@ -56,14 +56,19 @@ $check = $data->prepare(
     "SELECT user_id FROM users WHERE email = ? LIMIT 1"
 );
 
-$check->execute([$email]);
+$check->bind_param("s", $email);
+$check->execute();
+$check->store_result();
 
-if ($check->fetch()) {
+if ($check->num_rows > 0) {
     die("An account with this email already exists.");
 }
+$check->close();
 
 // Hash password
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+ensure_user_name_columns($data);
 
 // Insert user
 $sql = "
@@ -75,14 +80,16 @@ $sql = "
 
 $stmt = $data->prepare($sql);
 
-$stmt->execute([
+$stmt->bind_param(
+    "ssssss",
     $fname,
     $lname,
     $email,
     $hashed_password,
     $role,
     $status
-]);
+);
+$stmt->execute();
 
 echo "User account created successfully.";
 

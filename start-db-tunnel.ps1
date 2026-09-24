@@ -17,6 +17,8 @@ Write-Host "Opening database tunnel on 127.0.0.1:$LocalPort. Keep this window op
     -p 22 `
     -N `
     -L "${LocalPort}:127.0.0.1:3306" `
+    -o IdentitiesOnly=yes `
+    -o BatchMode=yes `
     -o ExitOnForwardFailure=yes `
     -o ServerAliveInterval=60 `
     baptiste@5.189.188.129

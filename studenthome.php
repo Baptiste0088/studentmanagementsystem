@@ -1,14 +1,9 @@
 <?php
 session_start();
-if(!isset( $_SESSION['email']))
-    {
-        header("location:login_form.php");
-    }
-     elseif($_SESSION['role']=='admin' OR $_SESSION['role']=='teacher')
-        {
-            header("location:login_form.php");
-        }
-
+if (!isset($_SESSION['user_id'], $_SESSION['email']) || ($_SESSION['role'] ?? null) !== 'student') {
+    header('Location: login_form.php');
+    exit;
+}
 ?>
 
 <!DOCTYPE html>

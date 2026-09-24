@@ -1,160 +1,120 @@
 <?php
-error_reporting(0);
+declare(strict_types=1);
+
 session_start();
-require_once __DIR__ . '/database.php';
-$data = database_connection();
-if(isset($_POST['user']))
-    {
-$email = $_POST['email'];
-$password = $_POST['password'];
-$role = $_POST['role'];
-$status = $_POST['status'];
-$hashed_password = password_hash($password, PASSWORD_DEFAULT);
-$check_email= "SELECT * FROM users WHERE email='$email'";
-$result =$data->query($check_email);
 
-if ($result->num_rows > 0) {
+$loginMessage = $_SESSION['loginMessage'] ?? '';
+$loginEmail = $_SESSION['loginEmail'] ?? '';
+unset($_SESSION['loginMessage'], $_SESSION['loginEmail']);
 
-    echo "Email already exists!";
-
-} else {
-
-    // Insert user
-    $sql = "INSERT INTO users (email, password, role, status)
-            VALUES ('$email', '$hashed_password', '$role', '$status')";
-
-
-    if ($data->query($sql) === TRUE) {
-
-        echo "
-        <script>
-            alert('User created successfully!');
-        </script>
-        ";
-
-    } else {
-
-        echo "Error: " . $conn->error;
-
-    }
-}
-    }
-
-
+$loginMessage = is_string($loginMessage) ? $loginMessage : '';
+$loginEmail = is_string($loginEmail) ? $loginEmail : '';
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
-</head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            
-        }
-
-        .login-container {
-            background:aqua;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-            width: 350px;
-            margin-left:-700px;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            background-color:white;
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            background-color: #007BFF;
-            color: white;
-            padding: 10px;
-            margin-top: 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        .links {
-            text-align: center;
-            margin-top: 15px;
-        }
-
-        .links a {
-            text-decoration: none;
-            color: #007BFF;
-        }
-
-        .links a:hover {
-            text-decoration: underline;
-        }
-        
-    </style>
+    <title>Sign in | G S KIZIGURO TSS</title>
+    <meta name="description" content="Sign in to the G S KIZIGURO TSS student management portal.">
+    <link rel="stylesheet" href="login.css">
 </head>
-<body  background="school_gate.jpg">
-<div class="login-container">
-    <a href="index.php" class="btn btn-success">Home</a>
-    <h2> Login Form</h2>
-<h5 style="color:red; font-weight:bold;" >
-    <?php 
-    session_destroy();
-    echo $_SESSION['loginMessage'];
-?>
-</h5>
-    <form action="login_check.php" method="POST">
+<body>
+<main class="auth-page">
+    <div class="auth-shell">
+        <section class="brand-panel" aria-label="G S KIZIGURO TSS">
+            <div class="brand-top">
+                <div class="brand-logo">
+                    <img src="school_logo.jpg" alt="" width="64" height="64">
+                </div>
+                <div class="brand-identity">
+                    <span class="brand-name">G S KIZIGURO TSS</span>
+                    <span class="brand-subtitle">Student management portal</span>
+                </div>
+            </div>
 
-        <label for="email">Email Address (Username)</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            <div class="brand-copy">
+                <span class="brand-kicker">WELCOME TO THE PORTAL</span>
+                <h2>Your school, one place to connect.</h2>
+                <span class="brand-rule" aria-hidden="true"></span>
+                <p>Access your school account and continue where you left off.</p>
+            </div>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required> </br></br>
+            <div class="brand-location">Kiziguro Sector, Rwanda</div>
+        </section>
 
-<button type="submit" name="login" class="btn btn-primary" >LOGIN</button>
+        <section class="form-panel" aria-labelledby="login-title">
+            <div class="form-top">
+                <a class="back-link" href="index.php"><span aria-hidden="true">&larr;</span> Back to home</a>
+            </div>
 
-    </form>
+            <div class="form-content">
+                <span class="form-eyebrow">ACCOUNT ACCESS</span>
+                <h1 id="login-title">Welcome back</h1>
+                <p class="form-intro">Sign in with the email address and password for your account.</p>
 
-    <div class="links">
-        <a href="forgot-password.php">Forgot Password?</a><br><br>
+                <?php if ($loginMessage !== ''): ?>
+                    <div class="login-alert" role="alert">
+                        <span class="alert-icon" aria-hidden="true">!</span>
+                        <span><?= htmlspecialchars($loginMessage, ENT_QUOTES, 'UTF-8') ?></span>
+                    </div>
+                <?php endif; ?>
+
+                <form action="login_check.php" method="post">
+                    <div class="form-field">
+                        <label for="email">Email address</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value="<?= htmlspecialchars($loginEmail, ENT_QUOTES, 'UTF-8') ?>"
+                            placeholder="you@example.com"
+                            autocomplete="username"
+                            autocapitalize="none"
+                            spellcheck="false"
+                            maxlength="191"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-field">
+                        <label for="password">Password</label>
+                        <div class="password-field">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button class="password-toggle" type="button" aria-label="Show password" aria-pressed="false">Show</button>
+                        </div>
+                    </div>
+
+                    <button class="sign-in-button" type="submit">
+                        Sign in <span aria-hidden="true">&rarr;</span>
+                    </button>
+                </form>
+
+                <p class="signup-prompt">New to the portal? <a href="signup.php">Create an account</a></p>
+            </div>
+
+            <p class="form-footer">G S KIZIGURO TSS</p>
+        </section>
     </div>
-</div>
+</main>
+<script>
+    const passwordInput = document.getElementById('password');
+    const passwordToggle = document.querySelector('.password-toggle');
 
+    passwordToggle.addEventListener('click', () => {
+        const isVisible = passwordInput.type === 'password';
+        passwordInput.type = isVisible ? 'text' : 'password';
+        passwordToggle.textContent = isVisible ? 'Hide' : 'Show';
+        passwordToggle.setAttribute('aria-label', isVisible ? 'Hide password' : 'Show password');
+        passwordToggle.setAttribute('aria-pressed', String(isVisible));
+    });
+</script>
 </body>
 </html>

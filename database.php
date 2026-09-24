@@ -54,3 +54,28 @@ function database_connection(): mysqli
 
     return $connection;
 }
+
+function ensure_user_name_columns(mysqli $connection): void
+{
+    $userColumns = $connection->query('SHOW COLUMNS FROM users');
+    $existingUserColumns = [];
+    while ($column = $userColumns->fetch_assoc()) {
+        $existingUserColumns[$column['Field']] = true;
+    }
+    $userColumns->free();
+
+    foreach (['first_name' => 'user_id', 'last_name' => 'first_name'] as $column => $after) {
+        if (isset($existingUserColumns[$column])) {
+            continue;
+        }
+
+        try {
+            $connection->query("ALTER TABLE users ADD COLUMN $column VARCHAR(100) NOT NULL DEFAULT '' AFTER $after");
+        } catch (mysqli_sql_exception $error) {
+            // Another request may have added the same column in the meantime.
+            if ($error->getCode() !== 1060) {
+                throw $error;
+            }
+        }
+    }
+}
